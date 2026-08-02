@@ -220,7 +220,15 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
   function buildRoundPool(roundIdx) {
     const targets = allocRef.current[roundIdx];
     const targetWords = SORT_CATS.flatMap((c) => targets[c]).map((t) => t.w);
-    const decoys = shuffle(ALL_WORDS_FLAT.filter((x) => !targetWords.includes(x.w))).slice(0, 11);
+    const seenDecoyWords = new Set();
+    const decoyPoolShuffled = shuffle(ALL_WORDS_FLAT.filter((x) => !targetWords.includes(x.w)));
+    const decoys = [];
+    for (const x of decoyPoolShuffled) {
+      if (decoys.length >= 3) break;
+      if (seenDecoyWords.has(x.w)) continue; // منع تكرار نفس الكلمة في البنك
+      seenDecoyWords.add(x.w);
+      decoys.push(x);
+    }
     return shuffle([...SORT_CATS.flatMap((c) => targets[c]), ...decoys]).map((w, i) => ({ ...w, id: `${roundIdx}-${i}` }));
   }
 
@@ -348,7 +356,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
                   const filled = boxes[cat][i];
                   return (
                     <div key={i} className="rounded-lg flex items-center justify-center" style={{ height: 34, background: filled ? "#FFFFFF" : "rgba(255,255,255,0.4)", border: filled ? "1.5px solid #D9860F" : "1.5px dashed #EFB84E" }}>
-                      {filled && <span style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 13, color: "#202430" }}>{filled.w}</span>}
+                      {filled && <span style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 15, color: "#202430" }}>{filled.w}</span>}
                     </div>
                   );
                 })}
@@ -357,16 +365,16 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           ))}
         </div>
 
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2.5">
           {pool.map((t) => (
             <div
               key={t.id}
               onPointerDown={(e) => onPointerDownTile(e, t)}
-              className={`rounded-xl py-3 flex items-center justify-center text-center select-none ${wrongId === t.id ? "shake-wrong" : ""}`}
+              className={`rounded-xl py-3.5 flex items-center justify-center text-center select-none ${wrongId === t.id ? "shake-wrong" : ""}`}
               style={{
                 background: dragging?.id === t.id ? "#FFDDA6" : "#F1F4F7",
                 border: `1.5px solid ${wrongId === t.id ? "#E88" : "#DDE2E8"}`,
-                color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 14, minHeight: 44,
+                color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 19, lineHeight: 1.4, minHeight: 52,
                 opacity: dragging?.id === t.id ? 0.3 : 1,
                 touchAction: "none", cursor: "grab",
               }}

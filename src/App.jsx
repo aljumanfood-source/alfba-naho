@@ -133,77 +133,6 @@ function isValidPrefix(type, chosenWords) {
 }
 
 /* ---------------- أصوات المؤثرات ---------------- */
-const PRAISE_VOICE_FILES = [
-  "/voice/praise_1_mashallah.mp3",
-  "/voice/praise_2_ahsant.mp3",
-  "/voice/praise_3_barakallah.mp3",
-  "/voice/praise_4_lilamam.mp3",
-  "/voice/praise_5_mumtaz.mp3",
-];
-const MISTAKE_VOICE_FILES = [
-  "/voice/mistake_1_akhtaa.mp3",
-  "/voice/mistake_2_hawil_marra.mp3",
-  "/voice/mistake_3_la_bas.mp3",
-  "/voice/mistake_4_qariban.mp3",
-];
-
-// تحميل مسبق لكل مقاطع الصوت الحقيقية عشان تشتغل فورًا بدون تأخير
-const voiceAudioCache = {};
-function getVoiceAudio(src) {
-  if (!voiceAudioCache[src]) {
-    const a = new Audio(src);
-    a.preload = "auto";
-    voiceAudioCache[src] = a;
-  }
-  return voiceAudioCache[src];
-}
-if (typeof window !== "undefined") {
-  [...PRAISE_VOICE_FILES, ...MISTAKE_VOICE_FILES].forEach(getVoiceAudio);
-  // فتح كل ملفات الصوت دفعة وحدة عند أول لمسة (بعض المتصفحات تقفل كل ملف صوتي لحاله)
-  let unlocked = false;
-  const unlockAllVoices = () => {
-    if (unlocked) return;
-    unlocked = true;
-    Object.values(voiceAudioCache).forEach((a) => {
-      const prevVolume = a.volume;
-      a.volume = 0;
-      const p = a.play();
-      if (p && p.then) {
-        p.then(() => { a.pause(); a.currentTime = 0; a.volume = prevVolume; }).catch(() => { a.volume = prevVolume; });
-      } else {
-        a.pause(); a.currentTime = 0; a.volume = prevVolume;
-      }
-    });
-    window.removeEventListener("pointerdown", unlockAllVoices);
-    window.removeEventListener("touchstart", unlockAllVoices);
-    window.removeEventListener("click", unlockAllVoices);
-  };
-  window.addEventListener("pointerdown", unlockAllVoices, { once: true });
-  window.addEventListener("touchstart", unlockAllVoices, { once: true });
-  window.addEventListener("click", unlockAllVoices, { once: true });
-}
-
-let currentVoiceAudio = null;
-function playVoiceFile(src) {
-  try {
-    if (currentVoiceAudio) {
-      currentVoiceAudio.pause();
-      currentVoiceAudio.currentTime = 0;
-    }
-    const audio = getVoiceAudio(src);
-    audio.currentTime = 0;
-    currentVoiceAudio = audio;
-    const p = audio.play();
-    if (p && p.catch) p.catch(() => {});
-  } catch (e) {}
-}
-function speakPraise() {
-  playVoiceFile(PRAISE_VOICE_FILES[Math.floor(Math.random() * PRAISE_VOICE_FILES.length)]);
-}
-function speakMistake() {
-  playVoiceFile(MISTAKE_VOICE_FILES[Math.floor(Math.random() * MISTAKE_VOICE_FILES.length)]);
-}
-
 function useSfx() {
   const ctxRef = useRef(null);
   const masterRef = useRef(null);
@@ -219,7 +148,6 @@ function useSfx() {
     return ctxRef.current;
   }
   function playCorrectTap() {
-    speakPraise();
     const ctx = ensureCtx(); const now = ctx.currentTime;
     const osc = ctx.createOscillator(); osc.type = "triangle"; osc.frequency.value = 660;
     const g = ctx.createGain();
@@ -227,7 +155,6 @@ function useSfx() {
     osc.connect(g).connect(masterRef.current); osc.start(now); osc.stop(now + 0.28);
   }
   function playWrongTap() {
-    speakMistake();
     const ctx = ensureCtx(); const now = ctx.currentTime;
     const osc = ctx.createOscillator(); osc.type = "sawtooth";
     osc.frequency.setValueAtTime(180, now); osc.frequency.exponentialRampToValueAtTime(90, now + 0.2);

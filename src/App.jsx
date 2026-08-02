@@ -133,41 +133,53 @@ function isValidPrefix(type, chosenWords) {
 }
 
 /* ---------------- أصوات المؤثرات ---------------- */
-const PRAISE_PHRASES = ["ما شاء الله", "أحسنت", "بارك الله فيك", "للأمام دائمًا", "ممتاز"];
-const MISTAKE_PHRASES = ["أخطأتَ", "حاول مرة أخرى", "لا بأس، حاول مجددًا", "قريبًا من الصواب"];
+const PRAISE_VOICE_FILES = [
+  "/voice/praise_1_mashallah.mp3",
+  "/voice/praise_2_ahsant.mp3",
+  "/voice/praise_3_barakallah.mp3",
+  "/voice/praise_4_lilamam.mp3",
+  "/voice/praise_5_mumtaz.mp3",
+];
+const MISTAKE_VOICE_FILES = [
+  "/voice/mistake_1_akhtaa.mp3",
+  "/voice/mistake_2_hawil_marra.mp3",
+  "/voice/mistake_3_la_bas.mp3",
+  "/voice/mistake_4_qariban.mp3",
+];
 
-let cachedArabicVoices = [];
-if (typeof window !== "undefined" && "speechSynthesis" in window) {
-  const refreshVoices = () => {
-    const list = window.speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith("ar"));
-    if (list.length) cachedArabicVoices = list;
-  };
-  refreshVoices();
-  window.speechSynthesis.onvoiceschanged = refreshVoices;
+// تحميل مسبق لكل مقاطع الصوت الحقيقية عشان تشتغل فورًا بدون تأخير
+const voiceAudioCache = {};
+function getVoiceAudio(src) {
+  if (!voiceAudioCache[src]) {
+    const a = new Audio(src);
+    a.preload = "auto";
+    voiceAudioCache[src] = a;
+  }
+  return voiceAudioCache[src];
 }
-function pickTeacherVoice() {
-  if (!cachedArabicVoices.length) return null;
-  const male = cachedArabicVoices.find((v) => /male/i.test(v.name) && !/female/i.test(v.name));
-  return male || cachedArabicVoices[0];
+if (typeof window !== "undefined") {
+  [...PRAISE_VOICE_FILES, ...MISTAKE_VOICE_FILES].forEach(getVoiceAudio);
 }
-function speak(text) {
+
+let currentVoiceAudio = null;
+function playVoiceFile(src) {
   try {
-    if (!("speechSynthesis" in window)) return;
-    const synth = window.speechSynthesis;
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "ar-SA";
-    utter.rate = 1;
-    utter.pitch = 0.85; // نبرة أعمق أقرب لصوت رجالي ناضج
-    const voice = pickTeacherVoice();
-    if (voice) utter.voice = voice;
-    synth.speak(utter);
+    if (currentVoiceAudio) {
+      currentVoiceAudio.pause();
+      currentVoiceAudio.currentTime = 0;
+    }
+    const audio = getVoiceAudio(src);
+    audio.currentTime = 0;
+    currentVoiceAudio = audio;
+    const p = audio.play();
+    if (p && p.catch) p.catch(() => {});
   } catch (e) {}
 }
 function speakPraise() {
-  speak(PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)]);
+  playVoiceFile(PRAISE_VOICE_FILES[Math.floor(Math.random() * PRAISE_VOICE_FILES.length)]);
 }
 function speakMistake() {
-  speak(MISTAKE_PHRASES[Math.floor(Math.random() * MISTAKE_PHRASES.length)]);
+  playVoiceFile(MISTAKE_VOICE_FILES[Math.floor(Math.random() * MISTAKE_VOICE_FILES.length)]);
 }
 
 function useSfx() {

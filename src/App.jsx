@@ -133,6 +133,27 @@ function isValidPrefix(type, chosenWords) {
 }
 
 /* ---------------- أصوات المؤثرات ---------------- */
+const PRAISE_PHRASES = ["أحسنتَ", "بارك الله فيك", "ممتاز", "رائع", "أجدتَ", "ما شاء الله"];
+const MISTAKE_PHRASES = ["أخطأتَ", "حاول مرة أخرى", "لا بأس، حاول مجددًا", "قريبًا من الصواب"];
+
+function speak(text) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel(); // إيقاف أي جملة سابقة لم تنتهِ بعد
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "ar-SA";
+    utter.rate = 0.95;
+    utter.pitch = 1;
+    window.speechSynthesis.speak(utter);
+  } catch (e) {}
+}
+function speakPraise() {
+  speak(PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)]);
+}
+function speakMistake() {
+  speak(MISTAKE_PHRASES[Math.floor(Math.random() * MISTAKE_PHRASES.length)]);
+}
+
 function useSfx() {
   const ctxRef = useRef(null);
   const masterRef = useRef(null);
@@ -148,6 +169,7 @@ function useSfx() {
     return ctxRef.current;
   }
   function playCorrectTap() {
+    speakPraise();
     const ctx = ensureCtx(); const now = ctx.currentTime;
     const osc = ctx.createOscillator(); osc.type = "triangle"; osc.frequency.value = 660;
     const g = ctx.createGain();
@@ -155,6 +177,7 @@ function useSfx() {
     osc.connect(g).connect(masterRef.current); osc.start(now); osc.stop(now + 0.28);
   }
   function playWrongTap() {
+    speakMistake();
     const ctx = ensureCtx(); const now = ctx.currentTime;
     const osc = ctx.createOscillator(); osc.type = "sawtooth";
     osc.frequency.setValueAtTime(180, now); osc.frequency.exponentialRampToValueAtTime(90, now + 0.2);

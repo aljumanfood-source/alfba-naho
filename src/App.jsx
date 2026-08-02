@@ -136,33 +136,32 @@ function isValidPrefix(type, chosenWords) {
 const PRAISE_PHRASES = ["ما شاء الله", "أحسنت", "بارك الله فيك", "للأمام دائمًا", "ممتاز"];
 const MISTAKE_PHRASES = ["أخطأتَ", "حاول مرة أخرى", "لا بأس، حاول مجددًا", "قريبًا من الصواب"];
 
-let cachedVoicesReady = false;
+let cachedArabicVoices = [];
 if (typeof window !== "undefined" && "speechSynthesis" in window) {
-  window.speechSynthesis.onvoiceschanged = () => { cachedVoicesReady = true; };
+  const refreshVoices = () => {
+    const list = window.speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith("ar"));
+    if (list.length) cachedArabicVoices = list;
+  };
+  refreshVoices();
+  window.speechSynthesis.onvoiceschanged = refreshVoices;
 }
 function pickTeacherVoice() {
-  if (!("speechSynthesis" in window)) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return null;
-  const arabicVoices = voices.filter((v) => v.lang && v.lang.toLowerCase().startsWith("ar"));
-  if (!arabicVoices.length) return null;
-  const male = arabicVoices.find((v) => /male/i.test(v.name) && !/female/i.test(v.name));
-  return male || arabicVoices[0];
+  if (!cachedArabicVoices.length) return null;
+  const male = cachedArabicVoices.find((v) => /male/i.test(v.name) && !/female/i.test(v.name));
+  return male || cachedArabicVoices[0];
 }
 function speak(text) {
   try {
     if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    // تأخير بسيط بعد الإلغاء لتفادي خلل معروف يسكت الصوت التالي في بعض متصفحات أندرويد
-    setTimeout(() => {
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "ar-SA";
-      utter.rate = 1;
-      utter.pitch = 0.85; // نبرة أعمق أقرب لصوت رجالي ناضج
-      const voice = pickTeacherVoice();
-      if (voice) utter.voice = voice;
-      window.speechSynthesis.speak(utter);
-    }, 60);
+    const synth = window.speechSynthesis;
+    if (synth.speaking || synth.pending) synth.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "ar-SA";
+    utter.rate = 1;
+    utter.pitch = 0.85; // نبرة أعمق أقرب لصوت رجالي ناضج
+    const voice = pickTeacherVoice();
+    if (voice) utter.voice = voice;
+    synth.speak(utter);
   } catch (e) {}
 }
 function speakPraise() {

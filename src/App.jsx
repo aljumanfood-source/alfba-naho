@@ -178,8 +178,8 @@ function vibrate(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch
 function Header({ eyebrow, title }) {
   return (
     <div className="px-6 pt-6 pb-4 text-center">
-      <p className="text-[11px] tracking-[0.3em] mb-1" style={{ color: "#F5A623", fontFamily: "'Reem Kufi', sans-serif" }}>{eyebrow}</p>
-      <h1 className="text-2xl" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, textShadow: "0 0 12px rgba(255,215,120,0.5)" }}>{title}</h1>
+      <p className="text-[11px] tracking-[0.3em] mb-1" style={{ color: "#F5A623", fontFamily: "'Amiri', serif" }}>{eyebrow}</p>
+      <h1 className="text-2xl" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, textShadow: "0 0 12px rgba(255,215,120,0.5)" }}>{title}</h1>
     </div>
   );
 }
@@ -319,7 +319,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           <div className="flex justify-center gap-2 mb-4">
             {[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#E3E6EA" }}>★</span>)}
           </div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>وما توفيقي إلا بالله</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>وما توفيقي إلا بالله</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أتممت {cleanRounds} من {SORT_TOTAL_ROUNDS} جولات دون خطأ</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -331,7 +331,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
 
   return (
     <div onPointerMove={dragging ? onPointerMove : undefined} onPointerUp={dragging ? onPointerUp : undefined} style={{ touchAction: dragging ? "none" : "auto" }}>
-      <Header eyebrow="" title="اسحب الكلمة في المربع المناسب" />
+      <Header eyebrow="" title="اسحب الكلمة إلى المكان المناسب" />
       <div className="px-4 pb-6 relative">
         <div className="flex items-center justify-center gap-2 mb-4">
           {Array.from({ length: SORT_TOTAL_ROUNDS }).map((_, i) => (
@@ -341,7 +341,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
 
         {message && (
           <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
-            <div className="match-burst px-7 py-3 rounded-2xl text-xl font-bold" style={{ background: "#F5A623", color: "#202430", fontFamily: "'Aref Ruqaa', serif" }}>
+            <div className="match-burst px-7 py-3 rounded-2xl text-xl font-bold" style={{ background: "#F5A623", color: "#202430", fontFamily: "'Amiri', serif" }}>
               ✦ {message} ✦
             </div>
           </div>
@@ -350,13 +350,13 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
         <div className="grid grid-cols-3 gap-2 mb-5">
           {catOrder.map((cat) => (
             <div key={cat} ref={(el) => (boxRefs.current[cat] = el)} className="rounded-2xl p-2 text-center" style={{ background: "#FFF1D9", border: "1.5px solid #EFB84E" }}>
-              <p className="mb-1.5" style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 16, color: "#8A5A12" }}>{cat}</p>
+              <p className="mb-1.5" style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 16, color: "#8A5A12" }}>{cat}</p>
               <div className="flex flex-col gap-1">
                 {[0, 1, 2].map((i) => {
                   const filled = boxes[cat][i];
                   return (
                     <div key={i} className="rounded-lg flex items-center justify-center" style={{ height: 34, background: filled ? "#FFFFFF" : "rgba(255,255,255,0.4)", border: filled ? "1.5px solid #D9860F" : "1.5px dashed #EFB84E" }}>
-                      {filled && <span style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 15, color: "#202430" }}>{filled.w}</span>}
+                      {filled && <span style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 15, color: "#202430" }}>{filled.w}</span>}
                     </div>
                   );
                 })}
@@ -366,7 +366,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
         </div>
 
         <div className="grid grid-cols-3 gap-2.5">
-          {pool.map((t) => (
+          {pool.filter((t) => !SORT_CATS.some((c) => boxes[c].some((x) => x.w === t.w))).map((t) => (
             <div
               key={t.id}
               onPointerDown={(e) => onPointerDownTile(e, t)}
@@ -374,7 +374,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
               style={{
                 background: dragging?.id === t.id ? "#FFDDA6" : "#F1F4F7",
                 border: `1.5px solid ${wrongId === t.id ? "#E88" : "#DDE2E8"}`,
-                color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 19, lineHeight: 1.4, minHeight: 52,
+                color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 19, lineHeight: 1.4, minHeight: 52,
                 opacity: dragging?.id === t.id ? 0.3 : 1,
                 touchAction: "none", cursor: "grab",
               }}
@@ -390,7 +390,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
             style={{
               left: dragging.x, top: dragging.y, transform: "translate(-50%,-50%) scale(1.1)",
               background: "#FFDDA6", border: "2px solid #D9860F", color: "#202430",
-              fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 16,
+              fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 16,
               boxShadow: "0 10px 24px -6px rgba(0,0,0,0.3)",
             }}
           >
@@ -465,7 +465,7 @@ function MatchGame({ sfx, usedWords, onWordsUsed, onFinish }) {
       <>
         <Header eyebrow="سفينة الإعراب · التأسيس" title="اختر الكلمات المتماثلة" />
         <div className="text-center py-10 px-7">
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت الكلمات المتماثلة!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت الكلمات المتماثلة!</p>
           <button onClick={() => onFinish(3)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
           </button>
@@ -487,14 +487,14 @@ function MatchGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           )}
           {slots.map((s, i) => (
             <div key={i} className={`rounded-2xl flex items-center justify-center flex-1 glow-pulse ${s ? "slot-fill" : ""}`} style={{ height: 90, background: s ? "#FFF3D6" : "#F5F5F7", border: s ? `3px solid ${CAT_COLOR[s.cat]}` : "2px dashed rgba(255,215,120,0.5)" }}>
-              {s && <span style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 22, color: "#202430" }}>{s.w}</span>}
+              {s && <span style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 22, color: "#202430" }}>{s.w}</span>}
             </div>
           ))}
         </div>
         <div className="grid grid-cols-3 gap-2">
           {pool.map((t) => (
             <button key={t.id} onClick={() => tapTile(t)} className={`tile-in rounded-xl py-3.5 flex items-center justify-center text-center ${wrongId === t.id ? "shake-wrong" : ""}`}
-              style={{ background: wrongId === t.id ? "rgba(200,60,60,0.4)" : "#F1F4F7", border: `1.5px solid ${wrongId === t.id ? "#E88" : "rgba(255,215,120,0.5)"}`, color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 15, minHeight: 52 }}>
+              style={{ background: wrongId === t.id ? "rgba(200,60,60,0.4)" : "#F1F4F7", border: `1.5px solid ${wrongId === t.id ? "#E88" : "rgba(255,215,120,0.5)"}`, color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 15, minHeight: 52 }}>
               {t.w}
             </button>
           ))}
@@ -613,7 +613,7 @@ function SignsDragGame({ sfx, onFinish, eyebrow, title, words, signsFor, diction
         <Header eyebrow={eyebrow} title={title} />
         <div className="text-center py-10 px-7">
           <div className="flex justify-center gap-2 mb-4">{[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#E3E6EA" }}>★</span>)}</div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت {title}!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت {title}!</p>
           <p className="text-sm mb-6" style={{ color: "#545B68" }}>ميّزت {correctCount} من {total} علامة صحيحة</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -634,7 +634,7 @@ function SignsDragGame({ sfx, onFinish, eyebrow, title, words, signsFor, diction
             <div key={i} className="rounded-full" style={{ width: i + 1 === roundNum ? 16 : 6, height: 6, background: i + 1 < roundNum ? "#4ADE80" : i + 1 === roundNum ? "#F5A623" : "#E3E6EA" }} />
           ))}
         </div>
-        <p className="text-center text-sm mb-4" style={{ color: "#8B2635", fontWeight: 900, fontFamily: "'Aref Ruqaa', serif" }}>
+        <p className="text-center text-sm mb-4" style={{ color: "#8B2635", fontWeight: 900, fontFamily: "'Amiri', serif" }}>
           اختر العلامات المناسبة لكلمة: <span style={{ color: "#202430" }}>{wordLabel(currentWord)}</span>؟
         </p>
 
@@ -651,7 +651,7 @@ function SignsDragGame({ sfx, onFinish, eyebrow, title, words, signsFor, diction
               }}
             >
               {box ? (
-                <span style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 17, color: box.valid ? "#1F7A3D" : "#B3221F" }}>{box.display}</span>
+                <span style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 17, color: box.valid ? "#1F7A3D" : "#B3221F" }}>{box.display}</span>
               ) : (
                 <span style={{ fontSize: 11, color: "#C9C4D4" }}>اسحب علامة هنا</span>
               )}
@@ -671,7 +671,7 @@ function SignsDragGame({ sfx, onFinish, eyebrow, title, words, signsFor, diction
               key={s.key}
               onPointerDown={(e) => onPointerDownTile(e, s)}
               className="rounded-xl py-3 text-center select-none"
-              style={{ background: dragging?.key === s.key ? "#FFDDA6" : "#F1F4F7", border: "1.5px solid #DDE2E8", color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 14, opacity: dragging?.key === s.key ? 0.3 : 1, touchAction: "none", cursor: "grab" }}
+              style={{ background: dragging?.key === s.key ? "#FFDDA6" : "#F1F4F7", border: "1.5px solid #DDE2E8", color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 14, opacity: dragging?.key === s.key ? 0.3 : 1, touchAction: "none", cursor: "grab" }}
             >
               {s.label}
             </div>
@@ -679,7 +679,7 @@ function SignsDragGame({ sfx, onFinish, eyebrow, title, words, signsFor, diction
         </div>
 
         {dragging && (
-          <div className="fixed pointer-events-none z-50 rounded-xl px-4 py-2.5" style={{ left: dragging.x, top: dragging.y, transform: "translate(-50%,-50%) scale(1.1)", background: "#FFDDA6", border: "2px solid #D9860F", color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 15, boxShadow: "0 10px 24px -6px rgba(0,0,0,0.3)" }}>
+          <div className="fixed pointer-events-none z-50 rounded-xl px-4 py-2.5" style={{ left: dragging.x, top: dragging.y, transform: "translate(-50%,-50%) scale(1.1)", background: "#FFDDA6", border: "2px solid #D9860F", color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 15, boxShadow: "0 10px 24px -6px rgba(0,0,0,0.3)" }}>
             {dragging.label}
           </div>
         )}
@@ -736,7 +736,7 @@ function NakiraGame({ sfx, onFinish }) {
         <Header eyebrow="سفينة الإعراب · التأسيس" title="النكرة والمعرفة" />
         <div className="text-center py-10 px-7">
           <div className="flex justify-center gap-2 mb-4">{[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#E3E6EA" }}>★</span>)}</div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت النكرة والمعرفة!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت النكرة والمعرفة!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أجبت بشكل صحيح على {score} من {NAKIRA_ROUNDS}</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -759,7 +759,7 @@ function NakiraGame({ sfx, onFinish }) {
           <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "#FFF1D9", color: "#8A5A12", border: "1px solid #EFB84E" }}>{score} نقطة</span>
         </div>
 
-        <p key={roundNum} className="question-pop text-center mb-8" style={{ fontSize: 36, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, color: "#202430" }}>{item.w}</p>
+        <p key={roundNum} className="question-pop text-center mb-8" style={{ fontSize: 36, fontFamily: "'Amiri', serif", fontWeight: 700, color: "#202430" }}>{item.w}</p>
 
         <div className="flex gap-3 justify-center mb-5">
           {["نكرة", "معرفة"].map((opt) => {
@@ -771,7 +771,7 @@ function NakiraGame({ sfx, onFinish }) {
             return (
               <button key={opt} onClick={() => pick(opt)} disabled={!!feedback}
                 className="flex-1 rounded-2xl py-4 text-center transition-all"
-                style={{ background: bg, border: `2px solid ${border}`, color, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 19 }}>
+                style={{ background: bg, border: `2px solid ${border}`, color, fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 19 }}>
                 {opt}
               </button>
             );
@@ -842,7 +842,7 @@ function FirasaGame({ sfx, onFinish }) {
         <Header eyebrow="سفينة الإعراب · الجملة" title="الفراسة" />
         <div className="text-center py-10 px-7">
           <div className="flex justify-center gap-2 mb-4">{[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#E3E6EA" }}>★</span>)}</div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت الفراسة!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت الفراسة!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أجبت بشكل صحيح على {score} من {FIRASA_ROUNDS}</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -865,7 +865,7 @@ function FirasaGame({ sfx, onFinish }) {
           <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "#FFF1D9", color: "#8A5A12", border: "1px solid #EFB84E" }}>{score} نقطة</span>
         </div>
 
-        <p key={roundNum} className="question-pop text-center mb-8" style={{ fontSize: 30, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, color: "#202430" }}>{item.s}</p>
+        <p key={roundNum} className="question-pop text-center mb-8" style={{ fontSize: 30, fontFamily: "'Amiri', serif", fontWeight: 700, color: "#202430" }}>{item.s}</p>
 
         <div className="flex gap-3 justify-center mb-5">
           {["اسمية", "فعلية"].map((opt) => {
@@ -877,7 +877,7 @@ function FirasaGame({ sfx, onFinish }) {
             return (
               <button key={opt} onClick={() => pick(opt)} disabled={!!feedback}
                 className="flex-1 rounded-2xl py-4 text-center transition-all"
-                style={{ background: bg, border: `2px solid ${border}`, color, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 19 }}>
+                style={{ background: bg, border: `2px solid ${border}`, color, fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 19 }}>
                 {opt}
               </button>
             );
@@ -950,7 +950,7 @@ function AzminaGame({ sfx, onFinish }) {
         <Header eyebrow="سفينة الإعراب · الأفعال" title="الأزمنة" />
         <div className="text-center py-10 px-7">
           <div className="flex justify-center gap-2 mb-4">{[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#E3E6EA" }}>★</span>)}</div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت الأزمنة!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت الأزمنة!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أجبت بشكل صحيح على {score} من {AZMINA_ROUNDS}</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -973,7 +973,7 @@ function AzminaGame({ sfx, onFinish }) {
           <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "#FFF1D9", color: "#8A5A12", border: "1px solid #EFB84E" }}>{score} نقطة</span>
         </div>
 
-        <p key={roundNum} className="question-pop text-center mb-8" style={{ fontSize: 24, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, color: "#202430" }}>{item.s}</p>
+        <p key={roundNum} className="question-pop text-center mb-8" style={{ fontSize: 24, fontFamily: "'Amiri', serif", fontWeight: 700, color: "#202430" }}>{item.s}</p>
 
         <div className="flex gap-2 justify-center mb-5">
           {["ماضٍ", "مضارع", "أمر"].map((opt) => {
@@ -985,7 +985,7 @@ function AzminaGame({ sfx, onFinish }) {
             return (
               <button key={opt} onClick={() => pick(opt)} disabled={!!feedback}
                 className="flex-1 rounded-2xl py-4 text-center transition-all"
-                style={{ background: bg, border: `2px solid ${border}`, color, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 17 }}>
+                style={{ background: bg, border: `2px solid ${border}`, color, fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 17 }}>
                 {opt}
               </button>
             );
@@ -1056,7 +1056,7 @@ function ConstructGame({ sfx, onFinish }) {
           <div className="flex justify-center gap-2 mb-4">
             {[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#DDD8E8" }}>★</span>)}
           </div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت التكوين!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت التكوين!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>كوّنت {cleanCount} من {TOTAL_ROUNDS} جمل من أول محاولة</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -1075,7 +1075,7 @@ function ConstructGame({ sfx, onFinish }) {
             <div key={i} className="rounded-full" style={{ width: i + 1 === roundNum ? 18 : 6, height: 6, background: i + 1 < roundNum ? "#4ADE80" : i + 1 === roundNum ? "#F5A623" : "#DDD8E8" }} />
           ))}
         </div>
-        <p key={roundNum} className="question-pop text-center mb-1" style={{ fontSize: 19, fontWeight: 900, color: "#F5A623", fontFamily: "'Aref Ruqaa', serif" }}>{round.type.title}</p>
+        <p key={roundNum} className="question-pop text-center mb-1" style={{ fontSize: 19, fontWeight: 900, color: "#F5A623", fontFamily: "'Amiri', serif" }}>{round.type.title}</p>
         <p className="text-center text-xs mb-5" style={{ color: "#545B68" }}>
           {step === 0 ? round.type.hint : requiredCat ? `أكمل بـ${STEP_HINT[requiredCat]}` : ""}
         </p>
@@ -1087,7 +1087,7 @@ function ConstructGame({ sfx, onFinish }) {
           )}
           {slots.map((s, i) => (
             <div key={i} className={`rounded-2xl flex items-center justify-center flex-1 glow-pulse ${s ? "slot-fill" : ""}`} style={{ height: 82, background: s ? "#FFF3D6" : "#F5F5F7", border: s ? `3px solid ${CAT_COLOR[s.cat]}` : "2px dashed rgba(255,215,120,0.5)" }}>
-              {s && <span style={{ fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 19, color: "#202430" }}>{s.w}</span>}
+              {s && <span style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 19, color: "#202430" }}>{s.w}</span>}
             </div>
           ))}
         </div>
@@ -1099,7 +1099,7 @@ function ConstructGame({ sfx, onFinish }) {
         <div className="grid grid-cols-3 gap-2">
           {round.tiles.filter((t) => !slots.some((s) => s && s.id === t.id)).map((t) => (
             <button key={t.id} onClick={() => tapTile(t)} className={`tile-in rounded-xl py-3.5 flex items-center justify-center text-center ${wrongId === t.id ? "shake-wrong" : ""}`}
-              style={{ background: wrongId === t.id ? "rgba(200,60,60,0.4)" : "#F1F4F7", border: `1.5px solid ${wrongId === t.id ? "#E88" : "rgba(255,215,120,0.5)"}`, color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 15, minHeight: 52 }}>
+              style={{ background: wrongId === t.id ? "rgba(200,60,60,0.4)" : "#F1F4F7", border: `1.5px solid ${wrongId === t.id ? "#E88" : "rgba(255,215,120,0.5)"}`, color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 15, minHeight: 52 }}>
               {t.w}
             </button>
           ))}
@@ -1187,7 +1187,7 @@ function TransformGame({ sfx, onFinish }) {
           <div className="flex justify-center gap-2 mb-4">
             {[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#DDD8E8" }}>★</span>)}
           </div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت التحويل!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت التحويل!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أجبت بشكل صحيح على {score} من {TRANSFORM_ROUNDS}</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -1214,7 +1214,7 @@ function TransformGame({ sfx, onFinish }) {
         <p key={roundNum} className="question-pop text-center mb-2" style={{ fontSize: 15, fontWeight: 700, color: "#545B68" }}>
           حوّل هذه الكلمة إلى <span style={{ color: "#F5A623" }}>{round.type.label}</span>
         </p>
-        <p className="text-center mb-6" style={{ fontSize: 34, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, color: "#202430" }}>{round.pair.s}</p>
+        <p className="text-center mb-6" style={{ fontSize: 34, fontFamily: "'Amiri', serif", fontWeight: 700, color: "#202430" }}>{round.pair.s}</p>
 
         <div className="flex flex-col gap-2.5 mb-5">
           {round.options.map((opt) => {
@@ -1226,7 +1226,7 @@ function TransformGame({ sfx, onFinish }) {
             return (
               <button key={opt} onClick={() => pick(opt)} disabled={!!feedback}
                 className="rounded-xl py-3 text-center transition-all"
-                style={{ background: bg, border: `1.5px solid ${border}`, color, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 20 }}>
+                style={{ background: bg, border: `1.5px solid ${border}`, color, fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 20 }}>
                 {opt}
               </button>
             );
@@ -1300,7 +1300,7 @@ function FaeilGame({ sfx, onFinish }) {
           <div className="flex justify-center gap-2 mb-4">
             {[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#DDD8E8" }}>★</span>)}
           </div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت الفاعل!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت الفاعل!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أجبت بشكل صحيح على {score} من {FAEIL_ROUNDS}</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             المتابعة <ChevronLeft size={15} />
@@ -1330,7 +1330,7 @@ function FaeilGame({ sfx, onFinish }) {
         <p key={roundNum} className="question-pop text-center mb-2" style={{ fontSize: 15, fontWeight: 700, color: "#545B68" }}>
           أين <span style={{ color: "#F5A623" }}>الفاعل</span> في الجملة التالية؟
         </p>
-        <p className="text-center mb-6" style={{ fontSize: 26, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, color: "#202430" }}>
+        <p className="text-center mb-6" style={{ fontSize: 26, fontFamily: "'Amiri', serif", fontWeight: 700, color: "#202430" }}>
           {words.join("   ")}
         </p>
 
@@ -1344,7 +1344,7 @@ function FaeilGame({ sfx, onFinish }) {
             return (
               <button key={opt} onClick={() => pick(opt)} disabled={!!feedback}
                 className="rounded-xl py-3 text-center transition-all"
-                style={{ background: bg, border: `1.5px solid ${border}`, color, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 20 }}>
+                style={{ background: bg, border: `1.5px solid ${border}`, color, fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 20 }}>
                 {opt}
               </button>
             );
@@ -1423,7 +1423,7 @@ function KanaGame({ sfx, onFinish }) {
           <div className="flex justify-center gap-2 mb-4">
             {[0, 1, 2].map((i) => <span key={i} style={{ fontSize: 32, color: i < stars ? "#F5A623" : "#DDD8E8" }}>★</span>)}
           </div>
-          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>أتممت كان وأخواتها!</p>
+          <p className="text-xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>أتممت كان وأخواتها!</p>
           <p className="text-sm mb-7" style={{ color: "#545B68" }}>أجبت بشكل صحيح على {score} من {KANA_ROUNDS}</p>
           <button onClick={() => onFinish(stars)} className="px-7 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-2 mx-auto" style={{ background: "linear-gradient(135deg,#F5A623,#D9860F)", color: "#2A1608" }}>
             إنهاء المرحلة <ChevronLeft size={15} />
@@ -1465,7 +1465,7 @@ function KanaGame({ sfx, onFinish }) {
             return (
               <button key={opt} onClick={() => pick(opt)} disabled={!!feedback}
                 className="rounded-xl py-3 text-center transition-all"
-                style={{ background: bg, border: `1.5px solid ${border}`, color, fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 19 }}>
+                style={{ background: bg, border: `1.5px solid ${border}`, color, fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 19 }}>
                 {opt}
               </button>
             );
@@ -1771,8 +1771,8 @@ export default function App() {
         {appPhase === "title" ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-8 py-16 fade-in">
             <p style={{ fontSize: 46 }} className="mb-4">⚔️</p>
-            <p className="text-xs tracking-[0.3em] mb-2" style={{ color: "#D9860F", fontFamily: "'Reem Kufi', sans-serif" }}>سفينة الإعراب</p>
-            <h1 className="text-3xl mb-3" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>لغة الضياء</h1>
+            <p className="text-xs tracking-[0.3em] mb-2" style={{ color: "#D9860F", fontFamily: "'Amiri', serif" }}>سفينة الإعراب</p>
+            <h1 className="text-3xl mb-3" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>لغة الضياء</h1>
             <p className="text-sm mb-10" style={{ color: "#545B68" }}>رحلتك لتعلّم النحو العربي بالتشويق والمتعة تبدأ الآن</p>
             <button
               onClick={() => setAppPhase("playing")}
@@ -1798,7 +1798,7 @@ export default function App() {
             const allVisited = visitedCount === allStationStages.length;
             return (
               <div className="flex flex-col items-center px-7 pt-8 pb-8 text-center">
-                <p style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 20 }} className="mb-1">المكافآت</p>
+                <p style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 20 }} className="mb-1">المكافآت</p>
                 <p className="text-xs mb-6" style={{ color: "#7A8496" }}>
                   {allVisited ? "زرت كل محطات الرحلة! ✦ انتقل إلى الجوائز لرؤية خاتمتها" : `زُرت من محطات الرحلة — ${visitedCount} من ${allStationStages.length}`}
                 </p>
@@ -1809,7 +1809,7 @@ export default function App() {
                     return (
                       <div key={stageId} className="rounded-2xl py-4 flex flex-col items-center gap-1.5" style={{ background: got ? "#FFF1D9" : "#FAFAFA", border: `1.5px ${got ? "solid" : "dashed"} ${got ? "#EFB84E" : "#E3E6EA"}` }}>
                         <span style={{ fontSize: 20 }}>{got ? "📍" : "❔"}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "'Aref Ruqaa', serif", color: got ? "#8A5A12" : "#98A0AC" }}>{got ? st.name : "؟؟؟"}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "'Amiri', serif", color: got ? "#8A5A12" : "#98A0AC" }}>{got ? st.name : "؟؟؟"}</span>
                       </div>
                     );
                   })}
@@ -1829,7 +1829,7 @@ export default function App() {
             const allVisited = allStationStages.every(isVisited);
             return (
               <div className="flex flex-col items-center px-7 pt-8 pb-8 text-center">
-                <p style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 20 }} className="mb-1">الجوائز</p>
+                <p style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 20 }} className="mb-1">الجوائز</p>
                 <p className="text-xs mb-6" style={{ color: "#7A8496" }}>{allVisited ? "خاتمة رحلتك الكاملة من ريسوت إلى صور" : "تُفتح خاتمة الرحلة بعد زيارة كل المحطات"}</p>
                 <div
                   className="rounded-2xl py-8 px-6 w-full flex flex-col items-center gap-3"
@@ -1837,7 +1837,7 @@ export default function App() {
                 >
                   <span style={{ fontSize: 40, filter: allVisited ? "none" : "grayscale(1)", opacity: allVisited ? 1 : 0.35 }}>🏆</span>
                   {allVisited ? (
-                    <p className="text-xs leading-relaxed" style={{ color: "#8A5A12", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>
+                    <p className="text-xs leading-relaxed" style={{ color: "#8A5A12", fontFamily: "'Amiri', serif", fontWeight: 700 }}>
                       {allStationStages.map((id) => STATIONS[id].name).join(" ← ")}
                     </p>
                   ) : (
@@ -1852,7 +1852,7 @@ export default function App() {
             <div className="flex flex-col items-center justify-center text-center px-8 h-full min-h-[500px]">
               {tab === "challenges" && <Swords size={40} color="#D8B24A" className="mb-4" />}
               {tab === "profile" && <User size={40} color="#D8B24A" className="mb-4" />}
-              <p style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, fontSize: 20 }} className="mb-2">
+              <p style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 20 }} className="mb-2">
                 {tab === "challenges" && "التحديات"}
                 {tab === "profile" && "الملف الشخصي"}
               </p>
@@ -1865,7 +1865,7 @@ export default function App() {
           {levelComplete ? (
             <div className="text-center py-14 px-7 fade-in">
               <p style={{ fontSize: 44 }} className="mb-3">🏆</p>
-              <p className="text-2xl mb-2" style={{ color: "#202430", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700 }}>
+              <p className="text-2xl mb-2" style={{ color: "#202430", fontFamily: "'Amiri', serif", fontWeight: 700 }}>
                 أتممت {LEVELS.find((l) => l.id === currentLevel)?.name}!
               </p>
               <p className="text-sm mb-8" style={{ color: "#545B68" }}>
@@ -1914,7 +1914,7 @@ export default function App() {
                 >
                   <ShieldCheck size={12} /> {adminMode ? "وضع المدير: مفعّل" : "وضع المدير"}
                 </button>
-                <p className="text-xs font-bold" style={{ color: "#D9860F", fontFamily: "'Reem Kufi', sans-serif", letterSpacing: "0.1em" }}>{levelDef.name}</p>
+                <p className="text-xs font-bold" style={{ color: "#D9860F", fontFamily: "'Amiri', serif", letterSpacing: "0.1em" }}>{levelDef.name}</p>
               </div>
 
               <div className="px-4 pb-8 pt-3">
@@ -1955,7 +1955,7 @@ export default function App() {
                                 <circle cx="13" cy="13" r="5.5" fill="#FFFFFF" />
                               </svg>
                               {!isLocked && (
-                                <p className="-mt-1 text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: "#FFF3D6", color: "#2A1608", fontFamily: "'Aref Ruqaa', serif", fontWeight: 700, border: "1px solid #8B2635" }}>
+                                <p className="-mt-1 text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: "#FFF3D6", color: "#2A1608", fontFamily: "'Amiri', serif", fontWeight: 700, border: "1px solid #8B2635" }}>
                                   {st.name}
                                 </p>
                               )}

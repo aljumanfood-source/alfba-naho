@@ -263,11 +263,14 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           break;
         }
       }
-      if (landedCat && landedCat === d.cat && boxes[landedCat].length < 3) {
-        sfx.playCorrectTap(); vibrate(20);
-        setPool((p) => p.filter((t) => t.id !== d.id));
-        onWordsUsed([d.w]);
+      if (landedCat && landedCat === d.cat) {
+        let placed = false;
         setBoxes((b) => {
+          // حماية: تجاهل أي محاولة وضع مكررة لنفس الكلمة أو لصندوق ممتلئ بالفعل
+          if (b[landedCat].length >= 3 || b[landedCat].some((x) => x.id === d.id)) {
+            return b;
+          }
+          placed = true;
           const next = { ...b, [landedCat]: [...b[landedCat], { id: d.id, w: d.w }] };
           const total = SORT_CATS.reduce((sum, c) => sum + next[c].length, 0);
           if (total === 9) {
@@ -283,6 +286,11 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           }
           return next;
         });
+        if (placed) {
+          sfx.playCorrectTap(); vibrate(20);
+          setPool((p) => p.filter((t) => t.id !== d.id));
+          onWordsUsed([d.w]);
+        }
       } else if (landedCat) {
         sfx.playWrongTap(); vibrate([15, 30, 15, 30]);
         setMadeMistakeThisRound(true);

@@ -315,7 +315,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
 
   return (
     <div onPointerMove={dragging ? onPointerMove : undefined} onPointerUp={dragging ? onPointerUp : undefined} style={{ touchAction: dragging ? "none" : "auto" }}>
-      <Header eyebrow="سفينة الإعراب · التأسيس" title="صناديق الفرز" />
+      <Header eyebrow="" title="اسحب الكلمة في المربع المناسب" />
       <div className="px-4 pb-6 relative">
         <div className="flex items-center justify-center gap-2 mb-4">
           {Array.from({ length: SORT_TOTAL_ROUNDS }).map((_, i) => (
@@ -1643,7 +1643,7 @@ const STATIONS = {
 };
 
 export default function App() {
-  const [appPhase, setAppPhase] = useState("title"); // title | playing
+  const [appPhase, setAppPhase] = useState("playing"); // title | playing
   const [currentLevel, setCurrentLevel] = useState(1);
   const [levelComplete, setLevelComplete] = useState(false);
   const [tab, setTab] = useState("home"); // home | chest | trophies | challenges | profile

@@ -159,6 +159,28 @@ function getVoiceAudio(src) {
 }
 if (typeof window !== "undefined") {
   [...PRAISE_VOICE_FILES, ...MISTAKE_VOICE_FILES].forEach(getVoiceAudio);
+  // فتح كل ملفات الصوت دفعة وحدة عند أول لمسة (بعض المتصفحات تقفل كل ملف صوتي لحاله)
+  let unlocked = false;
+  const unlockAllVoices = () => {
+    if (unlocked) return;
+    unlocked = true;
+    Object.values(voiceAudioCache).forEach((a) => {
+      const prevVolume = a.volume;
+      a.volume = 0;
+      const p = a.play();
+      if (p && p.then) {
+        p.then(() => { a.pause(); a.currentTime = 0; a.volume = prevVolume; }).catch(() => { a.volume = prevVolume; });
+      } else {
+        a.pause(); a.currentTime = 0; a.volume = prevVolume;
+      }
+    });
+    window.removeEventListener("pointerdown", unlockAllVoices);
+    window.removeEventListener("touchstart", unlockAllVoices);
+    window.removeEventListener("click", unlockAllVoices);
+  };
+  window.addEventListener("pointerdown", unlockAllVoices, { once: true });
+  window.addEventListener("touchstart", unlockAllVoices, { once: true });
+  window.addEventListener("click", unlockAllVoices, { once: true });
 }
 
 let currentVoiceAudio = null;

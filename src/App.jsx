@@ -154,7 +154,6 @@ function speak(text) {
   try {
     if (!("speechSynthesis" in window)) return;
     const synth = window.speechSynthesis;
-    if (synth.speaking || synth.pending) synth.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "ar-SA";
     utter.rate = 1;

@@ -306,11 +306,12 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           return next;
         });
         if (placed) {
-          sfx.playCorrectTap(); vibrate(20);
-          setPool((p) => p.filter((t) => t.id !== d.id));
-          onWordsUsed([d.w]);
           setCorrectId(d.id);
           setTimeout(() => setCorrectId(null), 450);
+          setPool((p) => p.filter((t) => t.id !== d.id));
+          onWordsUsed([d.w]);
+          vibrate(20);
+          try { sfx.playCorrectTap(); } catch (e) {}
         }
       } else if (landedCat) {
         sfx.playWrongTap(); vibrate([15, 30, 15, 30]);

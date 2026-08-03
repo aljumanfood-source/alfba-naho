@@ -149,10 +149,20 @@ function useSfx() {
   }
   function playCorrectTap() {
     const ctx = ensureCtx(); const now = ctx.currentTime;
-    const osc = ctx.createOscillator(); osc.type = "triangle"; osc.frequency.value = 660;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, now); g.gain.linearRampToValueAtTime(0.3, now + 0.015); g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-    osc.connect(g).connect(masterRef.current); osc.start(now); osc.stop(now + 0.28);
+    // نغمتان متصاعدتان لطيفتان (دينج-دينج) بدل نغمة واحدة
+    const notes = [
+      { freq: 660, start: 0, dur: 0.16 },
+      { freq: 880, start: 0.09, dur: 0.22 },
+    ];
+    notes.forEach(({ freq, start, dur }) => {
+      const t0 = now + start;
+      const osc = ctx.createOscillator(); osc.type = "triangle"; osc.frequency.value = freq;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(0.28, t0 + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      osc.connect(g).connect(masterRef.current); osc.start(t0); osc.stop(t0 + dur + 0.02);
+    });
   }
   function playWrongTap() {
     const ctx = ensureCtx(); const now = ctx.currentTime;
@@ -238,6 +248,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
   const [boxes, setBoxes] = useState({ "اسم": [], "فعل": [], "حرف": [] });
   const [dragging, setDragging] = useState(null); // {id, w, cat, x, y}
   const [wrongId, setWrongId] = useState(null);
+  const [correctId, setCorrectId] = useState(null);
   const [message, setMessage] = useState(null);
   const [done, setDone] = useState(false);
   const [cleanRounds, setCleanRounds] = useState(0);
@@ -298,6 +309,8 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
           sfx.playCorrectTap(); vibrate(20);
           setPool((p) => p.filter((t) => t.id !== d.id));
           onWordsUsed([d.w]);
+          setCorrectId(d.id);
+          setTimeout(() => setCorrectId(null), 450);
         }
       } else if (landedCat) {
         sfx.playWrongTap(); vibrate([15, 30, 15, 30]);
@@ -354,8 +367,9 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
               <div className="flex flex-col gap-1">
                 {[0, 1, 2].map((i) => {
                   const filled = boxes[cat][i];
+                  const justCorrect = filled && correctId === filled.id;
                   return (
-                    <div key={i} className="rounded-lg flex items-center justify-center" style={{ height: 34, background: filled ? "#FFFFFF" : "rgba(255,255,255,0.4)", border: filled ? "1.5px solid #D9860F" : "1.5px dashed #EFB84E" }}>
+                    <div key={i} className="rounded-lg flex items-center justify-center" style={{ height: 34, background: justCorrect ? "#B9F0C6" : filled ? "#FFFFFF" : "rgba(255,255,255,0.4)", border: justCorrect ? "1.5px solid #2FAE55" : filled ? "1.5px solid #D9860F" : "1.5px dashed #EFB84E", transition: "background 0.35s ease, border-color 0.35s ease" }}>
                       {filled && <span style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 15, color: "#202430" }}>{filled.w}</span>}
                     </div>
                   );

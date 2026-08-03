@@ -1946,74 +1946,50 @@ export default function App() {
 
               <div className="px-4 pb-8 pt-3">
                 {(() => {
-                  const n = levelStages.length;
-                  const stepY = 128;
-                  const topPad = 76, bottomPad = 76;
-                  const containerHeight = topPad + bottomPad + Math.max(0, n - 1) * stepY;
-                  const visibleHeight = Math.min(containerHeight, 480);
-                  function pointFor(i) {
-                    const yFromBottom = bottomPad + i * stepY;
-                    return { x: 50 + Math.sin(i * 1.3) * 24, y: containerHeight - yFromBottom };
-                  }
                   const currentIdx = levelStages.findIndex((s) => s.status === "current");
-                  const pathD = levelStages
-                    .map((s, i) => { const p = pointFor(i); return `${i === 0 ? "M" : "L"} ${p.x},${p.y}`; })
-                    .join(" ");
-                  const camelPt = pointFor(camelIndex);
                   return (
                     <div
                       ref={mapScrollRef}
-                      className="relative mx-auto rounded-2xl"
-                      style={{ width: "100%", maxWidth: 340, height: visibleHeight, overflowY: containerHeight > visibleHeight ? "auto" : "hidden", boxShadow: "0 8px 24px -8px rgba(0,0,0,0.4)" }}
+                      className="relative mx-auto rounded-2xl overflow-hidden"
+                      style={{ width: "100%", maxWidth: 340, paddingTop: "175%", boxShadow: "0 8px 24px -8px rgba(0,0,0,0.4)", background: "#F3ECDD" }}
                     >
-                      <div className="relative" style={{ width: "100%", height: containerHeight, background: "linear-gradient(180deg,#3B2E4A 0%,#6B4A5A 42%,#D9860F 100%)" }}>
-                        {/* نجوم */}
-                        <div className="absolute inset-0" style={{ opacity: 0.8 }}>
-                          {[...Array(14)].map((_, k) => (
-                            <div key={k} className="absolute" style={{
-                              left: `${(k * 37 + 8) % 92}%`,
-                              top: `${(k * 53 + 5) % 30}%`,
-                              width: k % 3 === 0 ? 3 : 2, height: k % 3 === 0 ? 3 : 2,
-                              borderRadius: "50%", background: "#FFF3C4",
-                            }} />
-                          ))}
-                        </div>
-                        {/* قمر */}
-                        <div className="absolute" style={{ left: "76%", top: "5%", width: 34, height: 34, borderRadius: "50%", background: "#FFF6DD", opacity: 0.9, boxShadow: "0 0 20px 6px rgba(255,246,221,0.35)" }} />
-                        {/* كثبان رملية طبقات */}
-                        <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 100 ${containerHeight}`} preserveAspectRatio="none">
-                          <path d={`M0,${containerHeight * 0.32} Q25,${containerHeight * 0.27} 50,${containerHeight * 0.31} T100,${containerHeight * 0.30} V${containerHeight} H0 Z`} fill="#B06E2E" opacity="0.45" />
-                          <path d={`M0,${containerHeight * 0.42} Q30,${containerHeight * 0.37} 55,${containerHeight * 0.41} T100,${containerHeight * 0.40} V${containerHeight} H0 Z`} fill="#C4863A" opacity="0.6" />
-                          <path d={`M0,${containerHeight * 0.55} Q35,${containerHeight * 0.51} 60,${containerHeight * 0.55} Q80,${containerHeight * 0.58} 100,${containerHeight * 0.54} V${containerHeight} H0 Z`} fill="#E8B25C" />
-                          {/* المسار المتعرج */}
-                          <path d={pathD} fill="none" stroke="#FFF3C4" strokeWidth="1.1" strokeDasharray="0.5,3.2" strokeLinecap="round" opacity="0.85" />
-                        </svg>
+                      <div className="absolute inset-0">
+                        <img
+                          src={OMAN_MAP_IMG}
+                          alt="خريطة عُمان"
+                          className="absolute inset-0 w-full h-full object-cover"
+                          style={{
+                            opacity: 0.62,
+                            WebkitMaskImage: "radial-gradient(ellipse 68% 62% at 50% 48%, #000 55%, transparent 92%)",
+                            maskImage: "radial-gradient(ellipse 68% 62% at 50% 48%, #000 55%, transparent 92%)",
+                          }}
+                        />
 
                         {levelStages.map((stage, i) => {
                           const isDone = stage.status === "done";
                           const isCurrent = stage.status === "current";
                           const isLocked = stage.status === "locked" && !adminMode;
-                          const p = pointFor(i);
+                          const st = STATIONS[stage.id];
                           const dist = currentIdx === -1 ? 0 : i - currentIdx;
-                          const lockedOpacity = isLocked ? Math.max(0.18, 0.6 - Math.max(0, dist - 1) * 0.18) : 1;
+                          const lockedOpacity = isLocked ? Math.max(0.22, 0.65 - Math.max(0, dist - 1) * 0.18) : 1;
                           return (
                             <button
                               key={stage.id}
                               data-current-stage={isCurrent ? "true" : undefined}
                               onClick={() => tapStage(stage)}
                               className={`absolute flex flex-col items-center ${isCurrent ? "pulse-glow-stage" : ""}`}
-                              style={{ left: `${p.x}%`, top: `${p.y}px`, transform: "translate(-50%,-50%)", width: 74, opacity: lockedOpacity }}
+                              style={{ left: `${st.x * 100}%`, top: `${st.y * 100}%`, transform: "translate(-50%,-50%)", width: 74, opacity: lockedOpacity }}
                             >
                               {isLocked ? (
-                                <div className="rounded-full flex items-center justify-center" style={{ width: 46, height: 46, background: "#5A5A66", border: "3px solid #8A8A96" }}>
-                                  <Lock size={18} color="#D8D6E0" />
+                                <div className="rounded-full flex items-center justify-center" style={{ width: 42, height: 42, background: "#B8ACA0", border: "3px solid #8B2635" }}>
+                                  <Lock size={16} color="#FFF6DD" />
                                 </div>
                               ) : isDone ? (
-                                <div className="rounded-full flex items-center justify-center" style={{ width: 50, height: 50, background: "#2FAE55", border: "4px solid #FFF6DD" }}>
-                                  <Check size={24} color="#fff" strokeWidth={3} />
+                                <div className="rounded-full flex items-center justify-center" style={{ width: 48, height: 48, background: "#8B2635", border: "4px solid #FFF6DD" }}>
+                                  <Check size={22} color="#fff" strokeWidth={3} />
                                 </div>
                               ) : (
-                                <div className="rounded-full flex items-center justify-center" style={{ width: 58, height: 58, background: "radial-gradient(circle,#FFF3C4 0%,#F5A623 55%,#D9860F 100%)", border: "4px solid #FFF6DD" }}>
+                                <div className="rounded-full flex items-center justify-center" style={{ width: 56, height: 56, background: "radial-gradient(circle,#FFF3C4 0%,#F5A623 55%,#D9860F 100%)", border: "4px solid #FFF6DD" }}>
                                   <span style={{ fontSize: 22 }}>{stage.icon}</span>
                                 </div>
                               )}
@@ -2034,9 +2010,9 @@ export default function App() {
                         <div
                           className="absolute camel-bob"
                           style={{
-                            left: `${camelPt.x}%`,
-                            top: `${camelPt.y - 46}px`,
-                            fontSize: 24,
+                            left: `${camelStation.x * 100}%`,
+                            top: `${camelStation.y * 100}%`,
+                            fontSize: 26,
                             filter: "drop-shadow(0 3px 5px rgba(0,0,0,0.4))",
                             transition: "left 1.3s ease-in-out, top 1.3s ease-in-out",
                             animationDuration: walking ? "0.5s" : "2.2s",

@@ -283,6 +283,8 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
         }
       }
       if (landedCat && landedCat === d.cat) {
+        try { sfx.playCorrectTap(); } catch (e) {}
+        vibrate(20);
         let placed = false;
         setBoxes((b) => {
           // حماية: تجاهل أي محاولة وضع مكررة لنفس الكلمة أو لصندوق ممتلئ بالفعل
@@ -307,11 +309,9 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
         });
         if (placed) {
           setCorrectId(d.id);
-          setTimeout(() => setCorrectId(null), 450);
+          setTimeout(() => setCorrectId(null), 550);
           setPool((p) => p.filter((t) => t.id !== d.id));
           onWordsUsed([d.w]);
-          vibrate(20);
-          try { sfx.playCorrectTap(); } catch (e) {}
         }
       } else if (landedCat) {
         sfx.playWrongTap(); vibrate([15, 30, 15, 30]);
@@ -370,7 +370,7 @@ function SortDragGame({ sfx, usedWords, onWordsUsed, onFinish }) {
                   const filled = boxes[cat][i];
                   const justCorrect = filled && correctId === filled.id;
                   return (
-                    <div key={i} className="rounded-lg flex items-center justify-center" style={{ height: 34, background: justCorrect ? "#B9F0C6" : filled ? "#FFFFFF" : "rgba(255,255,255,0.4)", border: justCorrect ? "1.5px solid #2FAE55" : filled ? "1.5px solid #D9860F" : "1.5px dashed #EFB84E", transition: "background 0.35s ease, border-color 0.35s ease" }}>
+                    <div key={i} className="rounded-lg flex items-center justify-center" style={{ height: 34, background: justCorrect ? "#8EE8A6" : filled ? "#FFFFFF" : "rgba(255,255,255,0.4)", border: justCorrect ? "2px solid #1F9D46" : filled ? "1.5px solid #D9860F" : "1.5px dashed #EFB84E", transition: justCorrect ? "none" : "background 0.5s ease, border-color 0.5s ease" }}>
                       {filled && <span style={{ fontFamily: "'Amiri', serif", fontWeight: 700, fontSize: 15, color: "#202430" }}>{filled.w}</span>}
                     </div>
                   );
